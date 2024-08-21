@@ -38,14 +38,19 @@ def signup():
     name = request.json.get("name", None)
     email = request.json.get("email", None)
     password = request.json.get("password", None)
+    phone = request.json.get("phone", None)
+    role = request.json.get("role", None)
     user = User.query.filter_by(email=email).first()
     if user:
         return jsonify({"msg": "user already exist"}), 401
     new_user = User(
         name=name,
         email=email,
-        password= generate_password_hash(password)
+        password= generate_password_hash(password),
+        phone=phone,
+        role=role,
     )
+    
     db.session.add(new_user)
     db.session.commit()
     
@@ -59,9 +64,32 @@ def get_users():
 
 
 
-@api.route("/user", methods=["GET"])
-@jwt_required()
-def get_user():
-    user_email = get_jwt_identity() 
-    user = User.query.filter_by(email=user_email).first()
-    return jsonify(user.serialize())
+@api.route("/users/<int:user_id>", methods=["GET"])
+def get_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if not user:
+        return jsonify("user does not exists")
+    else:
+        return jsonify(user.serialize()), 200
+
+
+@api.route("/users/<int:user_id>", methods=["PUT"])
+def update_user(user_id):
+    user = User.query.get_or_404(user_id)
+    data = request.json
+    user.name = data.get("name", user.name)
+    user.email = data.get("email", user.email)
+    if data.get("password"):
+        user.password = generate_password_hash(data.get("password"))
+    user.phone = data.get("phone", user.phone)
+    user.role = UserRole[data.get("role").upper()] if data.get("role") else user.role
+    db.session.commit()
+    return jsonify(user.serialize()), 200
+
+# Delete a user by ID
+@api.route("/users/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"msg": "User deleted successfully"}), 200
