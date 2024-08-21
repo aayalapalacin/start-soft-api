@@ -4,23 +4,7 @@ from enum import Enum
 
 db = SQLAlchemy()
 
-# Enum for role in Users table
-class UserRole(Enum):
-    CLIENT = 'client'
-    CONTRACTOR = 'contractor'
 
-# Enum for status in Projects and Tasks tables
-class StatusEnum(Enum):
-    PENDING = 'pending'
-    IN_PROGRESS = 'in_progress'
-    COMPLETED = 'completed'
-
-# Enum for choice type in Choices table
-class ChoiceType(Enum):
-    INSURANCE_SALES = 'Insurance sales'
-    WEB_DESIGN = 'Web design'
-    BUSINESS_DEV_MARKETING = 'Business development and marketing'
-    REAL_ESTATE = 'Real estate'
 
 class User(db.Model):
     __tablename__ = 'users'
