@@ -26,9 +26,9 @@ def login():
     expiration = datetime.timedelta(days=3)
     user = User.query.filter_by(email=email).first()
     if not user:
-        return jsonify("Email/Password are incorrect"),401
+        return jsonify({"msg": "Email/Password are incorrect"}),401
     if not check_password_hash(user.password,password):
-        return jsonify("Email/Password are incorrect"),401
+        return jsonify({"msg": "Email/Password are incorrect"}),401
     
     access_token = create_access_token(identity=email,expires_delta=expiration)
     return jsonify(access_token=access_token),200
@@ -54,7 +54,7 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
     
-    return jsonify("user created successfully")
+    return jsonify({"msg":"user created successfully","result": new_user.serialize()})
 
 @api.route("/users", methods=["GET"])
 def get_users():
@@ -68,7 +68,7 @@ def get_users():
 def get_user(user_id):
     user = User.query.filter_by(id=user_id).first()
     if not user:
-        return jsonify("user does not exists")
+        return jsonify({"msg": "user does not exists"})
     else:
         return jsonify(user.serialize()), 200
 
@@ -79,12 +79,10 @@ def update_user(user_id):
     data = request.json
     user.name = data.get("name", user.name)
     user.email = data.get("email", user.email)
-    if data.get("password"):
-        user.password = generate_password_hash(data.get("password"))
     user.phone = data.get("phone", user.phone)
-    user.role = UserRole[data.get("role").upper()] if data.get("role") else user.role
+    user.role = data.get("role", user.role)
     db.session.commit()
-    return jsonify(user.serialize()), 200
+    return jsonify({"msg":"user updated!","result":user.serialize()}), 200
 
 # Delete a user by ID
 @api.route("/users/<int:user_id>", methods=["DELETE"])
