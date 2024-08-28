@@ -143,7 +143,7 @@ def update_project(project_id):
 def delete_project(project_id):
     project = Project.query.filter_by(id=project_id).first()
     if not project:
-        return jsonify("Project does not exist"), 404
+        return jsonify({"msg":"Project does not exist"}), 404
     db.session.delete(project)
     db.session.commit()
     return jsonify({"msg": "Project deleted successfully"}), 200
@@ -160,12 +160,12 @@ def create_task():
         description=data.get("description"),
         project_id=data.get("project_id"),
         contractor_id=data.get("contractor_id"),
-        status=data.get("status", "PENDING"),
+        status=data.get("status"),
         is_completed=data.get("is_completed", False),
     )
     db.session.add(new_task)
     db.session.commit()
-    return jsonify(new_task.serialize()), 201
+    return jsonify({"msg":"task created","result":new_task.serialize()}), 201
 
 # Get all tasks
 @api.route("/tasks", methods=["GET"])
@@ -179,7 +179,7 @@ def get_tasks():
 def get_task(task_id):
     task = Task.query.filter_by(id=task_id).first()
     if not task:
-        return jsonify("Task does not exist"), 404
+        return jsonify({"msg":"Task does not exist"}), 404
     return jsonify(task.serialize()), 200
 
 # Update a task by ID
@@ -187,14 +187,14 @@ def get_task(task_id):
 def update_task(task_id):
     task = Task.query.filter_by(id=task_id).first()
     if not task:
-        return jsonify("Task does not exist"), 404
+        return jsonify({"msg":"Task does not exist"}), 404
     data = request.json
     task.name = data.get("name", task.name)
     task.description = data.get("description", task.description)
     task.status = data.get("status", task.status)
     task.is_completed = data.get("is_completed", task.is_completed)
     db.session.commit()
-    return jsonify(task.serialize()), 200
+    return jsonify({"msg":"task updated","result":task.serialize()}), 200
 
 # Delete a task by ID
 @api.route("/tasks/<int:task_id>", methods=["DELETE"])
