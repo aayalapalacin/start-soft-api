@@ -194,6 +194,7 @@ def update_task(task_id):
     task.status = data.get("status", task.status)
     task.is_completed = data.get("is_completed", task.is_completed)
     db.session.commit()
+    
     return jsonify({"msg":"task updated","result":task.serialize()}), 200
 
 # Delete a task by ID
@@ -201,7 +202,7 @@ def update_task(task_id):
 def delete_task(task_id):
     task = Task.query.filter_by(id=task_id).first()
     if not task:
-        return jsonify("Task does not exist"), 404
+        return jsonify({"msg":"Task does not exist"}), 404
     db.session.delete(task)
     db.session.commit()
     return jsonify({"msg": "Task deleted successfully"}), 200
@@ -221,7 +222,7 @@ def create_contract():
     )
     db.session.add(new_contract)
     db.session.commit()
-    return jsonify(new_contract.serialize()), 201
+    return jsonify({"msg":"contract created","result":new_contract.serialize()}), 201
 
 # Get all contracts
 @api.route("/contracts", methods=["GET"])
@@ -235,7 +236,7 @@ def get_contracts():
 def get_contract(contract_id):
     contract = Contract.query.filter_by(id=contract_id).first()
     if not contract:
-        return jsonify("Contract does not exist"), 404
+        return jsonify({"msg":"Contract does not exist"}), 404
     return jsonify(contract.serialize()), 200
 
 # Update a contract by ID
@@ -243,20 +244,20 @@ def get_contract(contract_id):
 def update_contract(contract_id):
     contract = Contract.query.filter_by(id=contract_id).first()
     if not contract:
-        return jsonify("Contract does not exist"), 404
+        return jsonify({"msg":"Contract does not exist"}), 404
     data = request.json
     contract.terms = data.get("terms", contract.terms)
     contract.client_signature = data.get("client_signature", contract.client_signature)
     contract.contractor_signature = data.get("contractor_signature", contract.contractor_signature)
     db.session.commit()
-    return jsonify(contract.serialize()), 200
+    return jsonify({"msg":"contrat updated","result":contract.serialize()}), 200
 
 # Delete a contract by ID
 @api.route("/contracts/<int:contract_id>", methods=["DELETE"])
 def delete_contract(contract_id):
     contract = Contract.query.filter_by(id=contract_id).first()
     if not contract:
-        return jsonify("Contract does not exist"), 404
+        return jsonify({"msg":"Contract does not exist"}), 404
     db.session.delete(contract)
     db.session.commit()
     return jsonify({"msg": "Contract deleted successfully"}), 200
@@ -273,7 +274,7 @@ def create_choice():
     )
     db.session.add(new_choice)
     db.session.commit()
-    return jsonify(new_choice.serialize()), 201
+    return jsonify({"msg":"choice created","result":new_choice.serialize()}), 201
 
 # Get all choices
 @api.route("/choices", methods=["GET"])
@@ -287,7 +288,7 @@ def get_choices():
 def get_choice(choice_id):
     choice = Choice.query.filter_by(id=choice_id).first()
     if not choice:
-        return jsonify("Choice does not exist"), 404
+        return jsonify({"msg":"Choice does not exist"}), 404
     return jsonify(choice.serialize()), 200
 
 # Update a choice by ID
@@ -295,18 +296,18 @@ def get_choice(choice_id):
 def update_choice(choice_id):
     choice = Choice.query.filter_by(id=choice_id).first()
     if not choice:
-        return jsonify("Choice does not exist"), 404
+        return jsonify({"msg":"Choice does not exist"}), 404
     data = request.json
     choice.choice_type = data.get("choice_type", choice.choice_type)
     db.session.commit()
-    return jsonify(choice.serialize()), 200
+    return jsonify({"msg":"choice updated!","result":choice.serialize()}), 200
 
 # Delete a choice by ID
 @api.route("/choices/<int:choice_id>", methods=["DELETE"])
 def delete_choice(choice_id):
     choice = Choice.query.filter_by(id=choice_id).first()
     if not choice:
-        return jsonify("Choice does not exist"), 404
+        return jsonify({"msg":"Choice does not exist"}), 404
     db.session.delete(choice)
     db.session.commit()
     return jsonify({"msg": "Choice deleted successfully"}), 200
