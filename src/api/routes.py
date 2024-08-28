@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
+from api.models import db, User, Project, Task, Contract, Choice
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
@@ -84,7 +84,7 @@ def update_user(user_id):
     db.session.commit()
     return jsonify({"msg":"user updated!","result":user.serialize()}), 200
 
-# Delete a user by ID
+
 @api.route("/users/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     user = User.query.filter_by(id=user_id).first()
@@ -102,14 +102,14 @@ def create_project():
         name=data.get("name"),
         description=data.get("description"),
         client_id=data.get("client_id"),
-        status=data.get("status", "PENDING"),
-        is_completed=data.get("is_completed", False),
+        status=data.get("status"),
+        is_completed=data.get("is_completed"),
     )
     db.session.add(new_project)
     db.session.commit()
-    return jsonify(new_project.serialize()), 201
+    return jsonify({"msg":"project created", "result": new_project.serialize()}), 201
 
-# Get all projects
+
 @api.route("/projects", methods=["GET"])
 def get_projects():
     projects_list = Project.query.all()
