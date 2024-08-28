@@ -38,7 +38,7 @@ class Project(db.Model):
     name = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text, nullable=True)
     client_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    status = db.Column(db.String(30), default=StatusEnum.PENDING, nullable=False)
+    status = db.Column(db.String(30), nullable=False)
     is_completed = db.Column(db.Boolean, nullable=True)
 
     tasks = db.relationship('Task', backref='project', lazy=True)
@@ -66,7 +66,7 @@ class Task(db.Model):
     description = db.Column(db.Text, nullable=True)
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
     contractor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    status = db.Column(db.String(30), default=StatusEnum.PENDING, nullable=False)
+    status = db.Column(db.String(30), nullable=False)
     is_completed = db.Column(db.Boolean, nullable=True)
  
     def __repr__(self):
