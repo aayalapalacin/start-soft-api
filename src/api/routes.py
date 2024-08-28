@@ -116,27 +116,27 @@ def get_projects():
     projects_serialized = [project.serialize() for project in projects_list]
     return jsonify(projects_serialized), 200
 
-# Get a project by ID
+
 @api.route("/projects/<int:project_id>", methods=["GET"])
 def get_project(project_id):
     project = Project.query.filter_by(id=project_id).first()
     if not project:
-        return jsonify("Project does not exist"), 404
+        return jsonify({"msg":"Project does not exist"}), 404
     return jsonify(project.serialize()), 200
 
-# Update a project by ID
+
 @api.route("/projects/<int:project_id>", methods=["PUT"])
 def update_project(project_id):
     project = Project.query.filter_by(id=project_id).first()
     if not project:
-        return jsonify("Project does not exist"), 404
+        return jsonify({"msg":"Project does not exist"}), 404
     data = request.json
     project.name = data.get("name", project.name)
     project.description = data.get("description", project.description)
     project.status = data.get("status", project.status)
     project.is_completed = data.get("is_completed", project.is_completed)
     db.session.commit()
-    return jsonify(project.serialize()), 200
+    return jsonify({"msg": "project updated","result":project.serialize()}), 200
 
 # Delete a project by ID
 @api.route("/projects/<int:project_id>", methods=["DELETE"])
